@@ -40,6 +40,7 @@ This document outlines the steps required to thoroughly test the functionality o
   1. Execute the login command.
   2. Confirm success messages.
   3. Check the database for updated user stats.
+  4. Use the stats command to make sure it's displaying the right data.
 
 ### 5. **Leaderboard**
 - **Objective**: Verify the leaderboard display.
