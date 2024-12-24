@@ -86,11 +86,10 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
                             'actualResult': [role.name for role in OUR_MEMBER.roles], 
                             'test': 'Got Role `Level 1` After Leveling Up After First Login'})
         except Exception as e:
-            tests.append({11:
-                            {'passed': False,
+            tests.append({'passed': False,
                             'expectedResult': 'We\'d have the role `Level 1`',
                             'actualResult': f'Exception: {e}',
-                            'test': 'Got Role `Level 1` After Leveling Up After First Login'}})
+                            'test': 'Got Role `Level 1` After Leveling Up After First Login'})
     except Exception as e:
         await writeExepctoinToLogFile(e, traceback.format_exc())
 
@@ -145,12 +144,12 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
         tests.append({'passed': False, 'expectedResult': MY_USER_NAME, 'actualResult': f'Exception {e}', 'test': 'username After First Login'})
 
     try:
-        tests.append({'passed': responseData['xp'] == 14, 
-                        'expectedResult': 14, 
+        tests.append({'passed': responseData['xp'] == 15, 
+                        'expectedResult': 15, 
                         'actualResult': responseData['xp'], 
                         'test': 'xp After First Login'})
     except Exception as e:
-        tests.append({'passed': False, 'expectedResult': 14, 'actualResult': f'Exception: {e}', 'test': 'xp After First Login'})
+        tests.append({'passed': False, 'expectedResult': 15, 'actualResult': f'Exception: {e}', 'test': 'xp After First Login'})
 
     await asyncio.sleep(3)
 
@@ -164,13 +163,13 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
     async for message in TESTING_CHANNEL.history(limit=1):
         # Checks Xp
         try:
-            tests.append({'passed': message.content.split('\n')[2] == '[0;34mXp: 14', 
-                            'expectedResult': '[0;34mXp: 14', 
-                            'actualResult': message.content.split('\n')[1], 
+            tests.append({'passed': message.content.split('\n')[2] == '[0;34mXp: 16', 
+                            'expectedResult': '[0;34mXp: 16', 
+                            'actualResult': message.content.split('\n')[2], 
                             'test': 'stats Command Xp After First Login'})
         except Exception as e:
             tests.append({'passed': False, 
-                            'expectedResult': '[0;34mXp: 14', 
+                            'expectedResult': '[0;34mXp: 16', 
                             'actualResult': f'Exception: {e}', 
                             'test': 'stats Command Xp After First Login'})
 
@@ -212,37 +211,40 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
             
         # Checks Last Login (UTC)
         try:
-            tests.append({'passed': message.content.split('\n')[6] == '[0;34mLast Login (UTC): ' + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'])), 
-                            'expectedResult': '[0;34mLast Login (UTC): ' + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'])), 
-                            'actualResult': message.content.split('\n')[6], 
-                            'test': 'stats Command Last Login (UTC) After First Login'})
+            utc_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'])) + ' UTC'
+            tests.append({'passed': message.content.split('\n')[6] == '[0;34mLast Login (UTC): ' + utc_time, 
+                    'expectedResult': '[0;34mLast Login (UTC): ' + utc_time, 
+                    'actualResult': message.content.split('\n')[6], 
+                    'test': 'stats Command Last Login (UTC) After First Login'})
         except Exception as e:
             tests.append({'passed': False, 
-                            'expectedResult': '[0;34mLast Login (UTC): ' + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'])), 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Last Login (UTC) After First Login'})
+                    'expectedResult': '[0;34mLast Login (UTC): ' + utc_time, 
+                    'actualResult': f'Exception: {e}', 
+                    'test': 'stats Command Last Login (UTC) After First Login'})
             
         # Checks Last Login (CST)
         try:
-            tests.append({'passed': message.content.split('\n')[7] == '[0;34mLast Login (CST): ' + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 21600), pytz.timezone('US/Central').tzname(None)), 
-                            'expectedResult': '[0;34mLast Login (CST): ' + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 21600), pytz.timezone('US/Central').tzname(None)), 
-                            'actualResult': message.content.split('\n')[7], 
-                            'test': 'stats Command Last Login (CST) After First Login'})
+            cst_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 21600)) + ' CST'
+            tests.append({'passed': message.content.split('\n')[7] == '[0;34mLast Login (CST): ' + cst_time, 
+                    'expectedResult': '[0;34mLast Login (CST): ' + cst_time, 
+                    'actualResult': message.content.split('\n')[7], 
+                    'test': 'stats Command Last Login (CST) After First Login'})
         except Exception as e:
             tests.append({'passed': False, 
-                            'expectedResult': '[0;34mLast Login (CST): ' + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 21600), pytz.timezone('US/Central').tzname(None)), 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Last Login (CST) After First Login'})
+                    'expectedResult': '[0;34mLast Login (CST): ' + cst_time, 
+                    'actualResult': f'Exception: {e}', 
+                    'test': 'stats Command Last Login (CST) After First Login'})
             
         # Checks Last Login (EST)
         try:
-            tests.append({'passed': message.content.split('\n')[8] == '[0;34mLast Login (EST): ' + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 18000), pytz.timezone('US/Eastern').tzname(None)), 
-                            'expectedResult': '[0;34mLast Login (EST): ' + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 18000), pytz.timezone('US/Eastern').tzname(None)), 
+            est_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 18000)) + ' EST'
+            tests.append({'passed': message.content.split('\n')[8] == '[0;34mLast Login (EST): ' + est_time, 
+                            'expectedResult': '[0;34mLast Login (EST): ' + est_time, 
                             'actualResult': message.content.split('\n')[8], 
                             'test': 'stats Command Last Login (EST) After First Login'})
         except Exception as e:
             tests.append({'passed': False, 
-                            'expectedResult': '[0;34mLast Login (EST): ' + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 18000), pytz.timezone('US/Eastern').tzname(None)), 
+                            'expectedResult': '[0;34mLast Login (EST): ' + est_time, 
                             'actualResult': f'Exception: {e}', 
                             'test': 'stats Command Last Login (EST) After First Login'})
             
@@ -260,19 +262,37 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
             
         # Checks there is a json file send called {MY_USER_NAME}_items.json with a empty list in it
         try:
-            message.attachments[0].save(f'{MY_USER_NAME}_items.json')
-            with open(f'{MY_USER_NAME}_items.json') as file:
-                data = file.read()
-            tests.append({'passed': data == '[]', 
-                            'expectedResult': '[]', 
-                            'actualResult': data, 
-                            'test': 'stats Command Items After First Login'})
-            os.remove(f'{MY_USER_NAME}_items.json')
+            tests.append({'passed': message.attachments[0].to_dict()['filename'] == f'{MY_USER_NAME}_items.json', 
+                            'expectedResult': f'{MY_USER_NAME}_items.json', 
+                            'actualResult': message.attachments[0].to_dict()['filename'], 
+                            'test': 'stats Command Items After First Login Filename'})
         except Exception as e:
             tests.append({'passed': False, 
-                            'expectedResult': '[]', 
+                            'expectedResult': f'{MY_USER_NAME}_items.json', 
                             'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Items After First Login'})
+                            'test': 'stats Command Items After First Login Filename'})
+            
+        try:
+            tests.append({'passed': message.attachments[0].to_dict()['size'] == 2, 
+                            'expectedResult': 2, 
+                            'actualResult': message.attachments[0].to_dict()['size'], 
+                            'test': 'stats Command Items After First Login Size'})
+        except Exception as e:
+            tests.append({'passed': False, 
+                            'expectedResult': 2, 
+                            'actualResult': f'Exception: {e}', 
+                            'test': 'stats Command Items After First Login Size'})
+            
+        try:
+            tests.append({'passed': message.attachments[0].to_dict()['content_type'] == 'application/json; charset=utf-8',
+                            'expectedResult': 'application/json; charset=utf-8',
+                            'actualResult': message.attachments[0].to_dict()['content_type'],
+                            'test': 'stats Command Items After First Login Content Type'})
+        except Exception as e:
+            tests.append({'passed': False,
+                            'expectedResult': 'application/json; charset=utf-8',
+                            'actualResult': f'Exception: {e}',
+                            'test': 'stats Command Items After First Login Content Type'})
 
     await asyncio.sleep(3)
 

@@ -53,10 +53,10 @@ async def send_a_message(TESTING_CHANNEL):
         tests.append({'passed': False, 'expectedResult': MY_USER_ID, 'actualResult': f'Exception: {e}', 'test': 'userId After First Message'})
 
     try:
-        tests.append({{'passed': responseData['username'] == MY_USER_NAME, 
+        tests.append({'passed': responseData['username'] == MY_USER_NAME, 
                         'expectedResult': MY_USER_NAME, 
                         'actualResult': responseData['username'], 
-                        'test': 'username After First Message'}})
+                        'test': 'username After First Message'})
     except Exception as e:
         tests.append({'passed': False, 'expectedResult': MY_USER_NAME, 'actualResult': f'Exception: {e}', 'test': 'username After First Message'})
 

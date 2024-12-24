@@ -1,15 +1,18 @@
 import selfcord
-import random
 import requests
 import asyncio
 import traceback
 import os
 import pytz
+import time
 
 from datetime import datetime
 
 from mySecrets import TOKEN
-from globalVars import EXCEPTION_OUTPUT_FILE_LOCATION, MY_USER_ID, LOG_CHANNEL_ID, TESTING_CHANNEL_ID, tests
+from globalVars import COLORS, tests
+from globalVars import EXCEPTION_OUTPUT_FILE_LOCATION, FAILED_TESTS_FILE_LOCATION, TEST_OUTPUT_FILE_LOCATION
+from globalVars import MY_USER_ID, MY_USER_NAME
+from globalVars import LOG_CHANNEL_ID, TESTING_CHANNEL_ID, OUTPUT_CHANNEL_ID
 from globalVars import writeExepctoinToLogFile
 
 from admin._1sendAMessage import send_a_message
@@ -17,23 +20,13 @@ from admin._2Stats import _2checkStats
 from admin._3makeLoginRewards import makeLoginRewards
 from admin._4login import login
 from admin._5getLeaderboard import getLeaderboard
+from admin._6levelToXp import levelToXp
 
 client = selfcord.Client()
 
-TEST_OUTPUT_FILE_LOCATION = './tests.csv'
-
-OUTPUT_CHANNEL_ID = 1320988937149349959
-
-COLORS = {
-    'red': '\u001b[1;31m',
-    'yellow': '\u001b[1;33m',
-    'blue': '\u001b[1;34m',
-    'green': '\u001b[1;32m',
-    'reset': '\u001b[0m'
-}
-
 @client.event
 async def on_ready():
+    testStartTime = time.time()
     print(f'Logged in as {client.user}')
 
     LOG_CHANNEL = client.get_channel(LOG_CHANNEL_ID)
@@ -134,6 +127,12 @@ Category, Test Name, Status, Message
 
     await asyncio.sleep(1)
 
+    # 6. Level to XP, and that we get the role `Level 2`
+    try:
+        await levelToXp(TESTING_CHANNEL, OUR_MEMBER)
+    except Exception as e:
+        await writeExepctoinToLogFile(e, traceback.format_exc())
+    '''
     async with TESTING_CHANNEL.typing():
         await asyncio.sleep(random.randint(5, 10))
         async for command in TESTING_CHANNEL.slash_commands():
@@ -151,76 +150,28 @@ Category, Test Name, Status, Message
                             'test': 'Generated Card'}})
         except Exception as e:
             tests.append({19: {'passed': False, 'expectedResult': 'Image', 'actualResult': f'Exception: {e}', 'test': 'Generated Card'}})
-
-    async with TESTING_CHANNEL.typing():
-        await asyncio.sleep(random.randint(5, 10))
-        await TESTING_CHANNEL.send('!leveltoxp 1')
-
-    await asyncio.sleep(5)
-
-    async for message in TESTING_CHANNEL.history(limit=1):
-        try:
-            tests.append({20: 
-                            {'passed': message.content == '```ansi\n[1;34mLevel 1 requires 10 XP.[0m\n```', 
-                            'expectedResult': '```ansi\n[1;34mLevel 1 requires 10 XP.[0m\n```', 
-                            'actualResult': message.content, 
-                            'test': 'Level to XP Command `Level 1`'}})
-        except Exception as e:
-            tests.append({20: 
-                            {'passed': False, 
-                            'expectedResult': '```ansi\n[1;34mLevel 1 requires 10 XP.[0m\n```', 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'Level to XP Command `Level 1`'}})
-            
-    async with TESTING_CHANNEL.typing():
-        await asyncio.sleep(random.randint(5, 10))
-        await TESTING_CHANNEL.send('!leveltoxp 10')
-
-    await asyncio.sleep(5)
-
-    async for message in TESTING_CHANNEL.history(limit=1):
-        try:
-            tests.append({21: 
-                            {'passed': message.content == '```ansi\n[1;34mLevel 10 requires 100 XP.[0m\n```', 
-                            'expectedResult': '```ansi\n[1;34mLevel 10 requires 100 XP.[0m\n```', 
-                            'actualResult': message.content, 
-                            'test': 'Level to XP Command `Level 10`'}})
-        except Exception as e:
-            tests.append({21: 
-                            {'passed': False, 
-                            'expectedResult': '```ansi\n[1;34mLevel 10 requires 100 XP.[0m\n```', 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'Level to XP Command `Level 10`'}})
-            
-    async with TESTING_CHANNEL.typing():
-        await asyncio.sleep(random.randint(5, 10))
-        await TESTING_CHANNEL.send('!leveltoxp 69')
-
-    await asyncio.sleep(5)
-
-    async for message in TESTING_CHANNEL.history(limit=1):
-        try:
-            tests.append({22: 
-                            {'passed': message.content == '```ansi\n[1;34mLevel 69 requires 1625964693 XP.[0m\n```', 
-                            'expectedResult': '```ansi\n[1;34mLevel 69 requires 1625964693 XP.[0m\n```', 
-                            'actualResult': message.content, 
-                            'test': 'Level to XP Command `Level 69`'}})
-        except Exception as e:
-            tests.append({22: 
-                            {'passed': False, 
-                            'expectedResult': '```ansi\n[1;34mLevel 69 requires 1625964693 XP.[0m\n```', 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'Level to XP Command `Level 69`'}})
-
+'''
     for index, test in enumerate(tests):
-        if not test[index]['passed']:
+        if not test['passed']:
             print(f"{COLORS['red']}Test {index}, \"{test['test']}\" failed. Expected: {test['expectedResult']}, Actual: {test['actualResult']} Type: {type(test['actualResult'])}{COLORS['reset']}")
             with open(TEST_OUTPUT_FILE_LOCATION, 'a') as file:
                 file.write(f'''Test {index}, "{test['test']}", FAILED, "Expected: {test['expectedResult']} Actual: {test['actualResult']} Type: {type(test['actualResult'])}"\n''')
+            
+            if not os.path.exists(FAILED_TESTS_FILE_LOCATION):
+                with open(FAILED_TESTS_FILE_LOCATION, 'w') as file:
+                    file.write(f'''CST Time: {cst_time.strftime(time_format)}
+EST Time: {est_time.strftime(time_format)}
+UTC Time: {utc_now.strftime(time_format)}
+Category, Test Name, Status, Message
+''')
+            with open(FAILED_TESTS_FILE_LOCATION, 'a') as file:
+                file.write(f'''Test {index}, "{test['test']}", FAILED, "Expected: {test['expectedResult']} Actual: {test['actualResult']} Type: {type(test['actualResult'])}"\n''')
+
         else:
             print(f"{COLORS['green']}Test {index}, \"{test['test']}\" passed{COLORS['reset']}")
             with open(TEST_OUTPUT_FILE_LOCATION, 'a') as file:
                 file.write(f'''Test {index}, "{test['test']}", PASSED, ""\n''')
+            
 
     await asyncio.sleep(5)
 
@@ -229,8 +180,20 @@ Category, Test Name, Status, Message
             await OUTPUT_CHANNEL.send(file=selfcord.File(EXCEPTION_OUTPUT_FILE_LOCATION))
             os.remove(EXCEPTION_OUTPUT_FILE_LOCATION)
 
+        if os.path.exists(FAILED_TESTS_FILE_LOCATION):
+            await OUTPUT_CHANNEL.send(file=selfcord.File(FAILED_TESTS_FILE_LOCATION))
+
         await OUTPUT_CHANNEL.send(file=selfcord.File(TEST_OUTPUT_FILE_LOCATION))
         os.remove(TEST_OUTPUT_FILE_LOCATION)
+
+        elapsed_time_seconds = time.time() - testStartTime
+        elapsed_time_minutes = elapsed_time_seconds / 60
+        await OUTPUT_CHANNEL.send(f'Tests took {elapsed_time_seconds:.2f} seconds ({elapsed_time_minutes:.2f} minutes).')
+
+        if not os.path.exists(FAILED_TESTS_FILE_LOCATION):
+            await OUTPUT_CHANNEL.send('All tests passed.')
+        else:
+            os.remove(FAILED_TESTS_FILE_LOCATION)
 
     except Exception as e:
         await writeExepctoinToLogFile(e, traceback.format_exc())

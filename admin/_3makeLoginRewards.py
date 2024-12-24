@@ -28,7 +28,7 @@ async def makeLoginRewards(TESTING_CHANNEL):
                             'actualResult': f'Exception: {e}', 
                             'test': 'Make Login Rewards Command'})
             
-    asyncio.sleep(3)
+    await asyncio.sleep(3)
 
     async with TESTING_CHANNEL.typing():
         await asyncio.sleep(random.randint(5, 15))
