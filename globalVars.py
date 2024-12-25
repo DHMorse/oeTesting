@@ -165,45 +165,43 @@ async def testStatsCommand(TESTING_CHANNEL, xp, level, money, lastLogin, daysLog
 
 
 
-async def testIfHaveRole(OUR_MEMBER, roleName, testContext: str = '', roleList: List[str] = None):
-    async def testSingleRole(OUR_MEMBER, roleName, testContext: str = ''):
-        try:
-            WeHaveRole = False
-            for role in OUR_MEMBER.roles:
-                if role.name == roleName:
-                    WeHaveRole = True
-                    break
-            try:
-                exceptedResult = f'We\'d have the role `{roleName}`'
-                testName = f'Got Role `{roleName}` After Leveling Up After {testContext}'
-                tests.append({'passed': WeHaveRole, 
-                                'expectedResult': exceptedResult, 
-                                'actualResult': [role.name for role in OUR_MEMBER.roles], 
-                                'test': testName})
-            except Exception as e:
-                tests.append({'passed': False,
-                                'expectedResult': exceptedResult,
-                                'actualResult': f'Exception: {e}',
-                                'test': testName})
-        except Exception as e:
-            await writeExepctoinToLogFile(e, traceback.format_exc())
-
+async def testIfHaveRole(OUR_MEMBER, roleList: List[str], testContext: str = ''):
     if roleList is not None:
         for roleName in roleList:
-            await testSingleRole(OUR_MEMBER, roleName, testContext)
-    else:
-        await testSingleRole(OUR_MEMBER, roleName, testContext)
+            try:
+                WeHaveRole = False
+                for role in OUR_MEMBER.roles:
+                    if role.name == roleName:
+                        WeHaveRole = True
+                        break
+                try:
+                    exceptedResult = f'We\'d have the role `{roleName}`'
+                    testName = f'Got Role `{roleName}` After Leveling Up After {testContext}'
+                    tests.append({'passed': WeHaveRole, 
+                                    'expectedResult': exceptedResult, 
+                                    'actualResult': [role.name for role in OUR_MEMBER.roles], 
+                                    'test': testName})
+                except Exception as e:
+                    tests.append({'passed': False,
+                                    'expectedResult': exceptedResult,
+                                    'actualResult': f'Exception: {e}',
+                                    'test': testName})
+            except Exception as e:
+                await writeExepctoinToLogFile(e, traceback.format_exc())
 
 
 
-async def testLoginMessage(TESTING_CHANNEL, xp: int, daysLoggedInInARow: int, testContext: str, 
+async def testLoginMessage(TESTING_CHANNEL, type: str, amount: int, daysLoggedInInARow: int, testContext: str, 
                             message1ToCheck: str = 'You have made your daily login!'):
     # rewrite this function to work with money too along with cards
     index: int = 0
     async for message in TESTING_CHANNEL.history(limit=2):
         if index == 0:
             index += 1
-            message0ToCheck = f'Congratulations! You have received {xp} XP for logging in {daysLoggedInInARow} days in a row!'
+            if type == 'xp':
+                message0ToCheck = f'Congratulations! You have received {amount} XP for logging in {daysLoggedInInARow} days in a row!'
+            elif type == 'money':
+                message0ToCheck = f'Congratulations! You have received ${amount} for logging in {daysLoggedInInARow} days in a row!'
             testName = f'login message 0 After {testContext}'
             try:
                 tests.append({'passed': message.content == message0ToCheck, 

@@ -219,11 +219,13 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
         await asyncio.sleep(random.randint(3, 10))
         await TESTING_CHANNEL.send('!login 1.1')
 
+    await asyncio.sleep(3)
+
     # Check if the user was given the role `Level 2`
-    await testIfHaveRole(OUR_MEMBER, roleName='Level 2', testContext='Second Login')
+    await testIfHaveRole(OUR_MEMBER, roleList=['Level 2'], testContext='Second Login')
 
     # Check to see if the messages are the expected messages
-    await testLoginMessage(TESTING_CHANNEL, xp=30, daysLoggedInInARow=2, testContext='Second Login')
+    await testLoginMessage(TESTING_CHANNEL, type='xp', amount=30, daysLoggedInInARow=2, testContext='Second Login')
 
     # login 3
     await asyncio.sleep(3)
@@ -232,10 +234,12 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
         await asyncio.sleep(random.randint(3, 10))
         await TESTING_CHANNEL.send('!login 1.1')
 
-    await testIfHaveRole(OUR_MEMBER, roleName='', testContext='Third Login', roleList=['Level 3', 'Level 4', 'Level 5', 'Level 6', 
-                                                                                        'Level 7', 'Level 8', 'Level 9'])
+    await asyncio.sleep(3)
 
-    await testLoginMessage(TESTING_CHANNEL, xp=97, daysLoggedInInARow=3, testContext='Third Login')
+    await testIfHaveRole(OUR_MEMBER, roleList=['Level 3', 'Level 4', 'Level 5', 'Level 6', 'Level 7', 'Level 8', 'Level 9'], 
+                        testContext='Third Login')
+
+    await testLoginMessage(TESTING_CHANNEL, type='xp', amount=97, daysLoggedInInARow=3, testContext='Third Login')
 
     # Login 4
     await asyncio.sleep(3)
@@ -244,9 +248,11 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
         await asyncio.sleep(random.randint(3, 10))
         await TESTING_CHANNEL.send('!login 1.1')
 
-    await testIfHaveRole(OUR_MEMBER, roleName='', testContext='Fourth Login', roleList=['Level 10', 'Level 11'])
+    await asyncio.sleep(3)
 
-    await testLoginMessage(TESTING_CHANNEL, xp=167, daysLoggedInInARow=4, testContext='Fourth Login')
+    await testIfHaveRole(OUR_MEMBER, roleList=['Level 10', 'Level 11'], testContext='Fourth Login')
+
+    await testLoginMessage(TESTING_CHANNEL, type='xp', amount=167, daysLoggedInInARow=4, testContext='Fourth Login')
 
     # login 5
     await asyncio.sleep(3)
@@ -255,8 +261,9 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
         await asyncio.sleep(random.randint(3, 10))
         await TESTING_CHANNEL.send('!login 1.1')
 
-    # doesn't work because this is a money reward and our function only works with xp
-    await testLoginMessage(TESTING_CHANNEL, xp=10, daysLoggedInInARow=5, testContext='Fifth Login')
+    await asyncio.sleep(3)
+
+    await testLoginMessage(TESTING_CHANNEL, type='money' amount=10, daysLoggedInInARow=5, testContext='Fifth Login')
 
     # Login 6
     await asyncio.sleep(3)
@@ -265,12 +272,24 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
         await asyncio.sleep(random.randint(3, 10))
         await TESTING_CHANNEL.send('!login 1.1')
 
+    await asyncio.sleep(3)
+
+    await testIfHaveRole(OUR_MEMBER, roleList=['Level 12', 'Level 13'], testContext='Sixth Login')
+
+    await testLoginMessage(TESTING_CHANNEL, type='xp', amount=269, daysLoggedInInARow=6, testContext='Sixth Login')
+
     # login 7
     await asyncio.sleep(3)
 
     async with TESTING_CHANNEL.typing():
         await asyncio.sleep(random.randint(3, 10))
         await TESTING_CHANNEL.send('!login 1.1')
+
+    await asyncio.sleep(3)
+
+    await testIfHaveRole(OUR_MEMBER, roleList=['Level 14'], testContext='Seventh Login')
+
+    await testLoginMessage(TESTING_CHANNEL, type='xp', amount=400, daysLoggedInInARow=7, testContext='Seventh Login')
 
     # Login 8
     await asyncio.sleep(3)
@@ -279,12 +298,24 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
         await asyncio.sleep(random.randint(3, 10))
         await TESTING_CHANNEL.send('!login 1.1')
 
+    await asyncio.sleep(3)
+
+    await testIfHaveRole(OUR_MEMBER, roleList=['Level 15', 'Level 16'], testContext='Eighth Login')
+
+    await testLoginMessage(TESTING_CHANNEL, type='xp', amount=561, daysLoggedInInARow=8, testContext='Eighth Login')
+
     # login 9
     await asyncio.sleep(3)
 
     async with TESTING_CHANNEL.typing():
         await asyncio.sleep(random.randint(3, 10))
         await TESTING_CHANNEL.send('!login 1.1')
+
+    await asyncio.sleep(3)
+
+    await testIfHaveRole(OUR_MEMBER, roleList=['Level 17'], testContext='Ninth Login')
+
+    await testLoginMessage(TESTING_CHANNEL, type='xp', amount=752, daysLoggedInInARow=9, testContext='Ninth Login')
 
     # Login 10
     await asyncio.sleep(3)
@@ -293,7 +324,9 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
         await asyncio.sleep(random.randint(3, 10))
         await TESTING_CHANNEL.send('!login 1.1')
 
-    await testStatsCommand(TESTING_CHANNEL, xp=747, level=17, money=5, lastLogin=responseData['lastLogin'], daysLoggedInInARow=10,
-                            testContext='10th Login')
+    await asyncio.sleep(3)
+
+    await testLoginMessage(TESTING_CHANNEL, type='card', amount=6, daysLoggedInInARow=10, testContext='Tenth Login')
     
-    # check that 
+    # this card check is going to fail because the generateCard command is not updated
+    # and the testLoginMessage function is not updated
