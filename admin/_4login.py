@@ -263,7 +263,7 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
 
     await asyncio.sleep(3)
 
-    await testLoginMessage(TESTING_CHANNEL, type='money' amount=10, daysLoggedInInARow=5, testContext='Fifth Login')
+    await testLoginMessage(TESTING_CHANNEL, type='money', amount=10, daysLoggedInInARow=5, testContext='Fifth Login')
 
     # Login 6
     await asyncio.sleep(3)
