@@ -7,7 +7,7 @@ import pytz
 import os
 
 from globalVars import MY_USER_ID, MY_USER_NAME, tests
-from globalVars import writeExepctoinToLogFile
+from globalVars import writeExepctoinToLogFile, testStatsCommand, testIfHaveRole, testLoginMessage
 
 async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
     async with TESTING_CHANNEL.typing():
@@ -153,146 +153,44 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
 
     await asyncio.sleep(3)
 
-    # Check the stats command to see if the user's stats were updated correctly
-    async with TESTING_CHANNEL.typing():
-        await asyncio.sleep(random.randint(1, 5))
-        await TESTING_CHANNEL.send('!stats')
+    await testStatsCommand(TESTING_CHANNEL, xp=16, level=1, money=0, lastLogin=responseData['lastLogin'], daysLoggedInInARow=1, 
+                            testContext='First Login')
 
-    await asyncio.sleep(3)
-
-    async for message in TESTING_CHANNEL.history(limit=1):
-        # Checks Xp
-        try:
-            tests.append({'passed': message.content.split('\n')[2] == '[0;34mXp: 16', 
-                            'expectedResult': '[0;34mXp: 16', 
-                            'actualResult': message.content.split('\n')[2], 
-                            'test': 'stats Command Xp After First Login'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': '[0;34mXp: 16', 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Xp After First Login'})
-
-        # Checks Level
-        try:
-            tests.append({'passed': message.content.split('\n')[3] == '[0;34mLevel: 1', 
-                            'expectedResult': '[0;34mLevel: 1', 
-                            'actualResult': message.content.split('\n')[3], 
-                            'test': 'stats Command Level After First Login'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': '[0;34mLevel: 1', 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Level After First Login'})
-
-        # Checks Money
-        try:
-            tests.append({'passed': message.content.split('\n')[4] == '[0;36mMoney: $0', 
-                            'expectedResult': '[0;36mMoney: $0', 
-                            'actualResult': message.content.split('\n')[4], 
-                            'test': 'stats Command Money After First Login'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': '[0;36mMoney: $0', 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Money After First Login'})
-            
-        # Checks Last Login (Seconds Since Epoch)
-        try:
-            tests.append({'passed': message.content.split('\n')[5] == '[0;36mLast Login (Seconds Since Epoch): ' + str(responseData['lastLogin']), 
-                            'expectedResult': '[0;36mLast Login (Seconds Since Epoch): ' + str(responseData['lastLogin']), 
-                            'actualResult': message.content.split('\n')[5], 
-                            'test': 'stats Command Last Login (Seconds Since Epoch) After First Login'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': '[0;36mLast Login (Seconds Since Epoch): ' + str(responseData['lastLogin']), 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Last Login (Seconds Since Epoch) After First Login'})
-            
-        # Checks Last Login (UTC)
-        try:
-            utc_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'])) + ' UTC'
-            tests.append({'passed': message.content.split('\n')[6] == '[0;34mLast Login (UTC): ' + utc_time, 
-                    'expectedResult': '[0;34mLast Login (UTC): ' + utc_time, 
-                    'actualResult': message.content.split('\n')[6], 
-                    'test': 'stats Command Last Login (UTC) After First Login'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                    'expectedResult': '[0;34mLast Login (UTC): ' + utc_time, 
-                    'actualResult': f'Exception: {e}', 
-                    'test': 'stats Command Last Login (UTC) After First Login'})
-            
-        # Checks Last Login (CST)
-        try:
-            cst_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 21600)) + ' CST'
-            tests.append({'passed': message.content.split('\n')[7] == '[0;34mLast Login (CST): ' + cst_time, 
-                    'expectedResult': '[0;34mLast Login (CST): ' + cst_time, 
-                    'actualResult': message.content.split('\n')[7], 
-                    'test': 'stats Command Last Login (CST) After First Login'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                    'expectedResult': '[0;34mLast Login (CST): ' + cst_time, 
-                    'actualResult': f'Exception: {e}', 
-                    'test': 'stats Command Last Login (CST) After First Login'})
-            
-        # Checks Last Login (EST)
-        try:
-            est_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(responseData['lastLogin'] - 18000)) + ' EST'
-            tests.append({'passed': message.content.split('\n')[8] == '[0;34mLast Login (EST): ' + est_time, 
-                            'expectedResult': '[0;34mLast Login (EST): ' + est_time, 
-                            'actualResult': message.content.split('\n')[8], 
-                            'test': 'stats Command Last Login (EST) After First Login'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': '[0;34mLast Login (EST): ' + est_time, 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Last Login (EST) After First Login'})
-            
-        # Checks Days Logged In In A Row
-        try:
-            tests.append({'passed': message.content.split('\n')[9] == '[0;36mDays Logged In In A Row: 1', 
-                            'expectedResult': '[0;36mDays Logged In In A Row: 1', 
-                            'actualResult': message.content.split('\n')[9], 
-                            'test': 'stats Command Days Logged In In A Row After First Login'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': '[0;36mDays Logged In In A Row: 1', 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Days Logged In In A Row After First Login'})
-            
-        # Checks there is a json file send called {MY_USER_NAME}_items.json with a empty list in it
-        try:
-            tests.append({'passed': message.attachments[0].to_dict()['filename'] == f'{MY_USER_NAME}_items.json', 
-                            'expectedResult': f'{MY_USER_NAME}_items.json', 
-                            'actualResult': message.attachments[0].to_dict()['filename'], 
-                            'test': 'stats Command Items After First Login Filename'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': f'{MY_USER_NAME}_items.json', 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Items After First Login Filename'})
-            
-        try:
-            tests.append({'passed': message.attachments[0].to_dict()['size'] == 2, 
-                            'expectedResult': 2, 
-                            'actualResult': message.attachments[0].to_dict()['size'], 
-                            'test': 'stats Command Items After First Login Size'})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': 2, 
-                            'actualResult': f'Exception: {e}', 
-                            'test': 'stats Command Items After First Login Size'})
-            
-        try:
-            tests.append({'passed': message.attachments[0].to_dict()['content_type'] == 'application/json; charset=utf-8',
-                            'expectedResult': 'application/json; charset=utf-8',
-                            'actualResult': message.attachments[0].to_dict()['content_type'],
-                            'test': 'stats Command Items After First Login Content Type'})
-        except Exception as e:
-            tests.append({'passed': False,
-                            'expectedResult': 'application/json; charset=utf-8',
-                            'actualResult': f'Exception: {e}',
-                            'test': 'stats Command Items After First Login Content Type'})
+    # Checks there is a json file send called {MY_USER_NAME}_items.json with a empty list in it
+    # this needs to be updated and put in the checkStatsCommand function
+    # but the generateCard command needs to be updated first
+    try:
+        tests.append({'passed': message.attachments[0].to_dict()['filename'] == f'{MY_USER_NAME}_items.json', 
+                        'expectedResult': f'{MY_USER_NAME}_items.json', 
+                        'actualResult': message.attachments[0].to_dict()['filename'], 
+                        'test': 'stats Command Items After First Login Filename'})
+    except Exception as e:
+        tests.append({'passed': False, 
+                        'expectedResult': f'{MY_USER_NAME}_items.json', 
+                        'actualResult': f'Exception: {e}', 
+                        'test': 'stats Command Items After First Login Filename'})
+        
+    try:
+        tests.append({'passed': message.attachments[0].to_dict()['size'] == 2, 
+                        'expectedResult': 2, 
+                        'actualResult': message.attachments[0].to_dict()['size'], 
+                        'test': 'stats Command Items After First Login Size'})
+    except Exception as e:
+        tests.append({'passed': False, 
+                        'expectedResult': 2, 
+                        'actualResult': f'Exception: {e}', 
+                        'test': 'stats Command Items After First Login Size'})
+        
+    try:
+        tests.append({'passed': message.attachments[0].to_dict()['content_type'] == 'application/json; charset=utf-8',
+                        'expectedResult': 'application/json; charset=utf-8',
+                        'actualResult': message.attachments[0].to_dict()['content_type'],
+                        'test': 'stats Command Items After First Login Content Type'})
+    except Exception as e:
+        tests.append({'passed': False,
+                        'expectedResult': 'application/json; charset=utf-8',
+                        'actualResult': f'Exception: {e}',
+                        'test': 'stats Command Items After First Login Content Type'})
 
     await asyncio.sleep(3)
 
@@ -313,3 +211,89 @@ async def login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER):
                             'expectedResult': 'You have already logged in today!', 
                             'actualResult': f'Exception: {e}', 
                             'test': 'login message after first login'})
+
+    # Login 2
+    await asyncio.sleep(3)
+
+    async with TESTING_CHANNEL.typing():
+        await asyncio.sleep(random.randint(3, 10))
+        await TESTING_CHANNEL.send('!login 1.1')
+
+    # Check if the user was given the role `Level 2`
+    await testIfHaveRole(OUR_MEMBER, roleName='Level 2', testContext='Second Login')
+
+    # Check to see if the messages are the expected messages
+    await testLoginMessage(TESTING_CHANNEL, xp=30, daysLoggedInInARow=2, testContext='Second Login')
+
+    # login 3
+    await asyncio.sleep(3)
+
+    async with TESTING_CHANNEL.typing():
+        await asyncio.sleep(random.randint(3, 10))
+        await TESTING_CHANNEL.send('!login 1.1')
+
+    await testIfHaveRole(OUR_MEMBER, roleName='', testContext='Third Login', roleList=['Level 3', 'Level 4', 'Level 5', 'Level 6', 
+                                                                                        'Level 7', 'Level 8', 'Level 9'])
+
+    await testLoginMessage(TESTING_CHANNEL, xp=97, daysLoggedInInARow=3, testContext='Third Login')
+
+    # Login 4
+    await asyncio.sleep(3)
+
+    async with TESTING_CHANNEL.typing():
+        await asyncio.sleep(random.randint(3, 10))
+        await TESTING_CHANNEL.send('!login 1.1')
+
+    await testIfHaveRole(OUR_MEMBER, roleName='', testContext='Fourth Login', roleList=['Level 10', 'Level 11'])
+
+    await testLoginMessage(TESTING_CHANNEL, xp=167, daysLoggedInInARow=4, testContext='Fourth Login')
+
+    # login 5
+    await asyncio.sleep(3)
+
+    async with TESTING_CHANNEL.typing():
+        await asyncio.sleep(random.randint(3, 10))
+        await TESTING_CHANNEL.send('!login 1.1')
+
+    # doesn't work because this is a money reward and our function only works with xp
+    await testLoginMessage(TESTING_CHANNEL, xp=10, daysLoggedInInARow=5, testContext='Fifth Login')
+
+    # Login 6
+    await asyncio.sleep(3)
+
+    async with TESTING_CHANNEL.typing():
+        await asyncio.sleep(random.randint(3, 10))
+        await TESTING_CHANNEL.send('!login 1.1')
+
+    # login 7
+    await asyncio.sleep(3)
+
+    async with TESTING_CHANNEL.typing():
+        await asyncio.sleep(random.randint(3, 10))
+        await TESTING_CHANNEL.send('!login 1.1')
+
+    # Login 8
+    await asyncio.sleep(3)
+
+    async with TESTING_CHANNEL.typing():
+        await asyncio.sleep(random.randint(3, 10))
+        await TESTING_CHANNEL.send('!login 1.1')
+
+    # login 9
+    await asyncio.sleep(3)
+
+    async with TESTING_CHANNEL.typing():
+        await asyncio.sleep(random.randint(3, 10))
+        await TESTING_CHANNEL.send('!login 1.1')
+
+    # Login 10
+    await asyncio.sleep(3)
+
+    async with TESTING_CHANNEL.typing():
+        await asyncio.sleep(random.randint(3, 10))
+        await TESTING_CHANNEL.send('!login 1.1')
+
+    await testStatsCommand(TESTING_CHANNEL, xp=747, level=17, money=5, lastLogin=responseData['lastLogin'], daysLoggedInInARow=10,
+                            testContext='10th Login')
+    
+    # check that 

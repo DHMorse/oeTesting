@@ -93,6 +93,8 @@ Category, Test Name, Status, Message
     except Exception as e:
         await writeExepctoinToLogFile(e, traceback.format_exc())
 
+    print('Finished: 1. Send a message')
+
     await asyncio.sleep(1)
 
     # 2. Check Stats
@@ -100,6 +102,8 @@ Category, Test Name, Status, Message
         await _2checkStats(TESTING_CHANNEL)
     except Exception as e:
         await writeExepctoinToLogFile(e, traceback.format_exc())
+
+    print('Finished: 2. Check Stats')
 
     await asyncio.sleep(1)
 
@@ -109,6 +113,8 @@ Category, Test Name, Status, Message
     except Exception as e:
         await writeExepctoinToLogFile(e, traceback.format_exc())
 
+    print('Finished: 3. Make Login Rewards')
+
     await asyncio.sleep(1)
 
     # 4. Login, check embed, got role `Level 1`, and stats
@@ -116,6 +122,8 @@ Category, Test Name, Status, Message
         await login(TESTING_CHANNEL, LOG_CHANNEL, OUR_MEMBER)
     except Exception as e:
         await writeExepctoinToLogFile(e, traceback.format_exc())
+
+    print('Finished: 4. Login')
 
     await asyncio.sleep(1)
 
@@ -125,6 +133,8 @@ Category, Test Name, Status, Message
     except Exception as e:
         await writeExepctoinToLogFile(e, traceback.format_exc())
 
+    print('Finished: 5. Get Leaderboard')
+
     await asyncio.sleep(1)
 
     # 6. Level to XP, and that we get the role `Level 2`
@@ -132,25 +142,11 @@ Category, Test Name, Status, Message
         await levelToXp(TESTING_CHANNEL, OUR_MEMBER)
     except Exception as e:
         await writeExepctoinToLogFile(e, traceback.format_exc())
-    '''
-    async with TESTING_CHANNEL.typing():
-        await asyncio.sleep(random.randint(5, 10))
-        async for command in TESTING_CHANNEL.slash_commands():
-            if command.name == "generatecard":
-                await command(TESTING_CHANNEL, prompt='An anime sword fighter.')
+    
+    print('Finished: 6. Level to XP')
 
-    await asyncio.sleep(30)
+    await asyncio.sleep(1)
 
-    async for message in TESTING_CHANNEL.history(limit=1):
-        try:
-            tests.append({19: 
-                            {'passed': message.attachments[0].url.endswith('.png') or message.attachments[0].url.endswith('.jpg'), 
-                            'expectedResult': 'Image', 
-                            'actualResult': 'Image', 
-                            'test': 'Generated Card'}})
-        except Exception as e:
-            tests.append({19: {'passed': False, 'expectedResult': 'Image', 'actualResult': f'Exception: {e}', 'test': 'Generated Card'}})
-'''
     for index, test in enumerate(tests):
         if not test['passed']:
             print(f"{COLORS['red']}Test {index}, \"{test['test']}\" failed. Expected: {test['expectedResult']}, Actual: {test['actualResult']} Type: {type(test['actualResult'])}{COLORS['reset']}")
