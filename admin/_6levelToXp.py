@@ -3,7 +3,8 @@ import random
 import traceback
 
 from globalVars import tests
-from globalVars import writeExepctoinToLogFile
+
+from helperFunctions import writeExepctoinToLogFile
 
 async def levelToXp(TESTING_CHANNEL, OUR_MEMBER):
     async with TESTING_CHANNEL.typing():

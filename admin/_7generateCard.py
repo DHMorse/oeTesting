@@ -4,7 +4,8 @@ import requests
 import traceback
 
 from globalVars import MY_USER_ID, MY_USER_NAME, tests
-from globalVars import writeExepctoinToLogFile
+
+from helperFunctions import writeExepctoinToLogFile
 
 async def generateCard(TESTING_CHANNEL):
     async with TESTING_CHANNEL.typing():

@@ -5,15 +5,15 @@ import traceback
 import os
 import pytz
 import time
-
 from datetime import datetime
 
 from mySecrets import TOKEN
+from helperFunctions import writeExepctoinToLogFile
+
 from globalVars import COLORS, tests
 from globalVars import EXCEPTION_OUTPUT_FILE_LOCATION, FAILED_TESTS_FILE_LOCATION, TEST_OUTPUT_FILE_LOCATION
 from globalVars import MY_USER_ID, MY_USER_NAME
 from globalVars import LOG_CHANNEL_ID, TESTING_CHANNEL_ID, OUTPUT_CHANNEL_ID
-from globalVars import writeExepctoinToLogFile
 
 from admin._1sendAMessage import send_a_message
 from admin._2Stats import _2checkStats
@@ -21,6 +21,8 @@ from admin._3makeLoginRewards import makeLoginRewards
 from admin._4login import login
 from admin._5getLeaderboard import getLeaderboard
 from admin._6levelToXp import levelToXp
+
+from admin._8testCensorship import testCensorship
 
 client = selfcord.Client()
 
@@ -144,6 +146,16 @@ Category, Test Name, Status, Message
         await writeExepctoinToLogFile(e, traceback.format_exc())
     
     print('Finished: 6. Level to XP')
+
+    await asyncio.sleep(1)
+
+    # 8. Test Censorship
+    try:
+        await testCensorship(TESTING_CHANNEL)
+    except Exception as e:
+        await writeExepctoinToLogFile(e, traceback.format_exc())
+
+    print('Finished: 8. Test Censorship')
 
     await asyncio.sleep(1)
 

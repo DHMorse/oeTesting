@@ -27,6 +27,106 @@ COLORS = {
     'reset': '\u001b[0m'
 }
 
+CLEAN_MESSAGES = [
+    "The sun is shining brightly today.",
+    "I just finished reading a great book!",
+    "What time is dinner tonight?",
+    "Have you seen my keys anywhere?",
+    "Let's take a walk in the park this afternoon.",
+    "I can't wait for the weekend to arrive.",
+    "The coffee at this new cafe is amazing.",
+    "I need to water the plants before they dry out.",
+    "Do you want to watch a movie later?",
+    "The birds outside are singing so beautifully.",
+    "This recipe calls for a pinch of salt.",
+    "I'll call you back in ten minutes.",
+    "The sky is so clear and blue right now.",
+    "I think I'll try baking cookies today.",
+    "How was your day at work?",
+    "We should plan a trip to the mountains.",
+    "Can you pick up some milk on your way home?",
+    "It's amazing how fast this year has gone by.",
+    "The dog loves playing fetch with the new ball.",
+    "I just learned how to fold an origami crane.",
+    "Do you remember where we parked the car?",
+    "The sound of rain is so relaxing.",
+    "Would you like some tea or coffee?",
+    "This sweater is so cozy and warm.",
+    "I'm looking forward to seeing you tomorrow.",
+    "The flowers in the garden are blooming beautifully.",
+    "Have you ever tried making homemade pasta?",
+    "The smell of freshly baked bread is wonderful.",
+    "It's nice to sit and relax after a busy day.",
+    "I love watching the sunset by the beach.",
+    "Could you help me carry these groceries inside?",
+    "I'm thinking of repainting the living room.",
+    "The cat is curled up on the windowsill again.",
+    "Do you want to join me for a game of chess?",
+    "I just discovered a new favorite song.",
+    "Let's have a picnic by the lake this weekend.",
+    "I really enjoyed our conversation earlier.",
+    "The stars look so bright and clear tonight.",
+    "Could you pass me the remote, please?",
+    "I'm organizing my bookshelf this afternoon.",
+    "I can't decide between vanilla or chocolate ice cream.",
+    "The breeze feels so refreshing right now.",
+    "We should try that new restaurant downtown.",
+    "This puzzle is more challenging than I expected.",
+    "The library is such a peaceful place to be.",
+    "I'm so excited to start my new hobby.",
+    "The waffles this morning were delicious!",
+    "I can't wait to see how this project turns out.",
+    "The kids are having so much fun at the park.",
+    "The aroma of cinnamon always reminds me of fall.",
+    "I need to finish writing that report tonight.",
+    "Would you like to go hiking this weekend?",
+    "I'm wrapping up a gift for a friend's birthday.",
+    "The clouds look like fluffy marshmallows today.",
+    "This scarf was a perfect choice for the weather.",
+    "Can we stop by the farmer's market later?",
+    "The concert last night was incredible!",
+    "I love trying out new recipes in the kitchen.",
+    "The fireplace makes the living room so cozy.",
+    "The soup is simmering and smells amazing.",
+    "The museum exhibit was so interesting and educational.",
+    "I finally learned how to knit a scarf!",
+    "The fresh air feels so invigorating today.",
+    "I can't believe how much the garden has grown.",
+    "Do you want to join me for a bike ride?",
+    "The treehouse looks like it came straight out of a storybook.",
+    "We should plan a road trip for the holidays.",
+    "The fruit salad turned out really tasty!",
+    "The bookstore had a great sale today.",
+    "This blanket is perfect for a chilly evening.",
+    "I'm thinking of planting more herbs in the garden.",
+    "The river looks so peaceful and calm.",
+    "It's so nice to catch up with old friends.",
+    "I found a cute little shop while walking downtown.",
+    "Let's make some hot cocoa and watch a movie.",
+    "The breeze smells like salt and the sea.",
+    "The pancakes turned out so fluffy this morning.",
+    "I think I'll go for a jog after breakfast.",
+    "Can you believe how fast the week has flown by?",
+    "The sunrise was absolutely stunning this morning.",
+    "I just finished organizing my closet and it feels great.",
+    "This book is so good I can't put it down.",
+    "The dog learned a new trick today!",
+    "The festival downtown was so much fun.",
+    "I love how soft this new sweater feels.",
+    "The homemade jam tastes amazing on toast.",
+    "Do you want to join me for a board game night?",
+    "The train ride through the countryside was beautiful.",
+    "I think the cookies need a few more minutes in the oven.",
+    "The sound of waves crashing on the shore is so soothing.",
+    "The picnic by the river was such a good idea.",
+    "I just finished assembling the new shelf, and it looks great.",
+    "Let's grab some ice cream after dinner.",
+    "The stars are twinkling so brightly tonight.",
+    "I'm excited to start the new project tomorrow.",
+    "The new park in the neighborhood looks amazing.",
+    "This candle smells like vanilla and lavender."
+]
+
 tests: List[Dict[str, any]] = []
 
     #[
@@ -37,191 +137,3 @@ tests: List[Dict[str, any]] = []
     #        'test': str
     #    } 
     #]
-
-async def writeExepctoinToLogFile(exception: Exception, traceback: str):
-    with open(EXCEPTION_OUTPUT_FILE_LOCATION, 'a') as file:
-        file.write(f'Exception: {exception}\nTraceback: {traceback}\n\n')
-
-async def testStatsCommand(TESTING_CHANNEL, xp, level, money, lastLogin, daysLoggedInInARow, testContext: str = ''):
-    # Check the stats command to see if the user's stats were updated correctly
-    async with TESTING_CHANNEL.typing():
-        await asyncio.sleep(random.randint(1, 5))
-        await TESTING_CHANNEL.send('!stats')
-
-    await asyncio.sleep(3)
-
-    async for message in TESTING_CHANNEL.history(limit=1):
-        # Checks Xp
-        xpToCheck = f'[0;34mXp: {xp}'
-        testName = f'stats Command Xp After {testContext}'
-        try:
-            tests.append({'passed': message.content.split('\n')[2] == xpToCheck, 
-                            'expectedResult': xpToCheck, 
-                            'actualResult': message.content.split('\n')[2], 
-                            'test': testName})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': xpToCheck, 
-                            'actualResult': f'Exception: {e}', 
-                            'test': testName})
-
-        # Checks Level
-        levelToCheck = f'[0;34mLevel: {level}'
-        testName = f'stats Command Level After {testContext}'
-        try:
-            tests.append({'passed': message.content.split('\n')[3] == levelToCheck, 
-                            'expectedResult': levelToCheck, 
-                            'actualResult': message.content.split('\n')[3], 
-                            'test': testName})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': levelToCheck, 
-                            'actualResult': f'Exception: {e}', 
-                            'test': testName})
-
-        # Checks Money
-        moneyToCheck = f'[0;36mMoney: ${money}'
-        testName = f'stats Command Money After {testContext}'
-        try:
-            tests.append({'passed': message.content.split('\n')[4] == moneyToCheck, 
-                            'expectedResult': moneyToCheck, 
-                            'actualResult': message.content.split('\n')[4], 
-                            'test': testName})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': moneyToCheck, 
-                            'actualResult': f'Exception: {e}', 
-                            'test': testName})
-            
-        # Checks Last Login (Seconds Since Epoch)
-        secondsSinceEpochToCheck = '[0;36mLast Login (Seconds Since Epoch): ' + str(lastLogin)
-        testName = f'stats Command Last Login (Seconds Since Epoch) After {testContext}'
-        try:
-            tests.append({'passed': message.content.split('\n')[5] == secondsSinceEpochToCheck, 
-                            'expectedResult': secondsSinceEpochToCheck, 
-                            'actualResult': message.content.split('\n')[5], 
-                            'test': testName})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': secondsSinceEpochToCheck, 
-                            'actualResult': f'Exception: {e}', 
-                            'test': testName})
-            
-        # Checks Last Login (UTC)
-        utcTimeToCheck = f'[0;34mLast Login (UTC): {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(lastLogin))} UTC'
-        testName = f'stats Command Last Login (UTC) After {testContext}'
-        try:
-            tests.append({'passed': message.content.split('\n')[6] == utcTimeToCheck, 
-                    'expectedResult': utcTimeToCheck, 
-                    'actualResult': message.content.split('\n')[6], 
-                    'test': testName})
-        except Exception as e:
-            tests.append({'passed': False, 
-                    'expectedResult': utcTimeToCheck, 
-                    'actualResult': f'Exception: {e}', 
-                    'test': testName})
-            
-        # Checks Last Login (CST)
-        cstTimeToCheck = f'[0;34mLast Login (CST): {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(lastLogin - 21600))} CST'
-        testName = f'stats Command Last Login (CST) After {testContext}'
-        try:
-            tests.append({'passed': message.content.split('\n')[7] == cstTimeToCheck, 
-                    'expectedResult': cstTimeToCheck, 
-                    'actualResult': message.content.split('\n')[7], 
-                    'test': testName})
-        except Exception as e:
-            tests.append({'passed': False, 
-                    'expectedResult': cstTimeToCheck, 
-                    'actualResult': f'Exception: {e}', 
-                    'test': testName})
-            
-        # Checks Last Login (EST)
-        estTimeToCheck = f'[0;34mLast Login (EST): {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(lastLogin - 18000))} EST'
-        testName = f'stats Command Last Login (EST) After {testContext}'
-        try:
-            tests.append({'passed': message.content.split('\n')[8] == estTimeToCheck, 
-                            'expectedResult': estTimeToCheck, 
-                            'actualResult': message.content.split('\n')[8], 
-                            'test': testName})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': estTimeToCheck, 
-                            'actualResult': f'Exception: {e}', 
-                            'test': testName})
-            
-        # Checks Days Logged In In A Row
-        daysLoggedInInARowToCheck = f'[0;36mDays Logged In In A Row: {str(daysLoggedInInARow)}'
-        testName = f'stats Command Days Logged In In A Row After {testContext}'
-        try:
-            tests.append({'passed': message.content.split('\n')[9] == daysLoggedInInARowToCheck, 
-                            'expectedResult': daysLoggedInInARowToCheck, 
-                            'actualResult': message.content.split('\n')[9], 
-                            'test': testName})
-        except Exception as e:
-            tests.append({'passed': False, 
-                            'expectedResult': daysLoggedInInARowToCheck, 
-                            'actualResult': f'Exception: {e}', 
-                            'test': testName})
-
-
-
-async def testIfHaveRole(OUR_MEMBER, roleList: List[str], testContext: str = ''):
-    if roleList is not None:
-        for roleName in roleList:
-            try:
-                WeHaveRole = False
-                for role in OUR_MEMBER.roles:
-                    if role.name == roleName:
-                        WeHaveRole = True
-                        break
-                try:
-                    exceptedResult = f'We\'d have the role `{roleName}`'
-                    testName = f'Got Role `{roleName}` After Leveling Up After {testContext}'
-                    tests.append({'passed': WeHaveRole, 
-                                    'expectedResult': exceptedResult, 
-                                    'actualResult': [role.name for role in OUR_MEMBER.roles], 
-                                    'test': testName})
-                except Exception as e:
-                    tests.append({'passed': False,
-                                    'expectedResult': exceptedResult,
-                                    'actualResult': f'Exception: {e}',
-                                    'test': testName})
-            except Exception as e:
-                await writeExepctoinToLogFile(e, traceback.format_exc())
-
-
-
-async def testLoginMessage(TESTING_CHANNEL, type: str, amount: int, daysLoggedInInARow: int, testContext: str, 
-                            message1ToCheck: str = 'You have made your daily login!'):
-    # rewrite this function to work with money too along with cards
-    index: int = 0
-    async for message in TESTING_CHANNEL.history(limit=2):
-        if index == 0:
-            index += 1
-            if type == 'xp':
-                message0ToCheck = f'Congratulations! You have received {amount} XP for logging in {daysLoggedInInARow} days in a row!'
-            elif type == 'money':
-                message0ToCheck = f'Congratulations! You have received ${amount} for logging in {daysLoggedInInARow} days in a row!'
-            testName = f'login message 0 After {testContext}'
-            try:
-                tests.append({'passed': message.content == message0ToCheck, 
-                                    'expectedResult': message0ToCheck, 
-                                    'actualResult': message.content, 
-                                    'test': testName})
-            except Exception as e:
-                tests.append({'passed': False, 
-                                'expectedResult': message0ToCheck, 
-                                'actualResult': f'Exception: {e}', 
-                                'test': testName})
-        else:
-            testName = f'login message 1 After {testContext}'
-            try:
-                tests.append({'passed': message.content == message1ToCheck, 
-                                    'expectedResult': message1ToCheck, 
-                                    'actualResult': message.content, 
-                                    'test': testName})
-            except Exception as e:
-                tests.append({'passed': False,
-                                'expectedResult': message1ToCheck,
-                                'actualResult': f'Exception: {e}',
-                                'test': testName})

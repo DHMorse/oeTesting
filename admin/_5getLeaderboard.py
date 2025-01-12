@@ -3,7 +3,8 @@ import random
 import traceback
 
 from globalVars import TEST_OUTPUT_FILE_LOCATION, tests
-from globalVars import writeExepctoinToLogFile
+
+from helperFunctions import writeExepctoinToLogFile
 
 async def getLeaderboard(TESTING_CHANNEL):
     async with TESTING_CHANNEL.typing():
